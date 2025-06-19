@@ -73,7 +73,7 @@
 
 1. **스키마 확인**
 
-   - `npm run check-schema [테이블명]` 실행
+   - `cd api && npm run check-schema [테이블명]` 실행
    - 테이블 구조 및 컬럼 정보 분석
    - 컬럼 주석(COMMENT)이 '삭제'인 필드 제외
 
@@ -155,37 +155,19 @@
 
 ## ✅ 완료 확인
 
-### 생성된 파일 체크리스트
-
-- [ ] `api/src/modules/[테이블명-케밥케이스]/type/[테이블명-케밥케이스].type.ts`
-- [ ] `api/src/modules/[테이블명-케밥케이스]/dao/[테이블명-케밥케이스].dao.ts`
-- [ ] `api/src/modules/[테이블명-케밥케이스]/service/[테이블명-케밥케이스].service.ts`
-- [ ] `api/src/modules/[테이블명-케밥케이스]/controller/[테이블명-케밥케이스].validator.ts`
-- [ ] `api/src/modules/[테이블명-케밥케이스]/controller/[테이블명-케밥케이스].controller.ts`
-- [ ] `api/src/modules/[테이블명-케밥케이스]/test/[테이블명-케밥케이스].test.ts`
-
-### 품질 검증 단계
-
-1. **파일 생성 완료 확인**
-
-   ```bash
-   ls -la api/src/modules/[테이블명-케밥케이스]/
-   ```
-
-2. **린트 검사 및 자동 수정**
+1. **린트 검사 및 자동 수정**
 
    ```bash
    npm run lint:fixed
    ```
 
-3. **최종 테스트 검증**
+2. **최종 테스트 검증**
    ```bash
    npx jest api/src/modules/[모듈명]/test/[모듈명].test.ts
    ```
 
 ### 최종 품질 체크리스트
 
-- [ ] 모든 파일이 정상 생성됨
 - [ ] 타입 정의가 완벽함 (옵셔널 타입 없음, 주석 완비)
 - [ ] 함수 구현이 완성됨 (모든 CRUD 기능)
 - [ ] 네이밍 규칙 준수함 (케밥 케이스, 표준 함수명)
