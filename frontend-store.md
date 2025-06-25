@@ -64,7 +64,6 @@
 - **수정**: `update()`
 - **사용여부 변경**: `updateUse()`
 - **삭제**: `softDelete()`
-- **검색 파라미터 초기화**: `listParamsInit()`
 - **상세 데이터 초기화**: `detailDataInit()`
 
 ### 타입 정의 규칙
@@ -114,11 +113,7 @@
 
 7. **상태 변수 정의**
 
-   - 목록 데이터: `listData`
-   - 상세 데이터: `detailData`
-   - 검색 파라미터: `listParams`
-   - 페이징 정보: `listTotalRow`
-   - 선택된 키: `selectedKey`
+   - `webapp/src/modules/test/run/test-data.store.ts` 파일 형식 참고
 
 8. **API 호출 함수 구현**
 
@@ -162,7 +157,6 @@
 - [ ] 수정 (`update()`) 함수 구현
 - [ ] 사용여부 변경 (`updateUse()`) 함수 구현
 - [ ] 삭제 (`softDelete()`) 함수 구현
-- [ ] 검색 파라미터 초기화 (`listParamsInit()`) 함수 구현
 - [ ] 상세 데이터 초기화 (`detailDataInit()`) 함수 구현
 
 ### 품질 검증 단계
