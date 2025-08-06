@@ -108,12 +108,12 @@
 6. **Store 파일 생성/완성**
 
    - `webapp/src/modules/[모듈명]/run/[모듈명].store.ts` 생성
-   - `webapp/src/modules/test/run/test-data.store.ts` 파일 형식 참고
+   - `webapp/src/modules/test-data/run/test-data.store.ts` 파일 형식 참고
    - Option API 방식 사용
 
 7. **상태 변수 정의**
 
-   - `webapp/src/modules/test/run/test-data.store.ts` 파일 형식 참고
+   - `webapp/src/modules/test-data/run/test-data.store.ts` 파일 형식 참고
 
 8. **API 호출 함수 구현**
 
@@ -124,7 +124,7 @@
 9. **테스트 코드 생성**
 
    - `webapp/src/modules/[모듈명]/test/[모듈명].test.ts` 생성
-   - `webapp/src/modules/test/test/test-data.test.ts` 파일 형식 참고
+   - `webapp/src/modules/test-data/test/test-data.test.ts` 파일 형식 참고
    - CRUD API 호출 테스트 포함
 
 10. **백엔드 서버 구동 및 테스트 실행**

@@ -160,27 +160,27 @@ cp -r src/modules/[테이블명-케밥케이스]/ ../[테이블명]-service/
 3. **타입 인터페이스 생성 (작업폴더안에서 꼭 작업!! 중요!)**
 
    - `api/src/modules/[테이블명-케밥케이스]/type/[테이블명-케밥케이스].type.ts`로 파일 생성
-   - `api/src/modules/test/type/test-data.type.ts` 파일 형식 참고
+   - `api/src/modules/test-data/type/test-data.type.ts` 파일 형식 참고
    - 4개 인터페이스 생성: 기본, PagingDto, InsertDto, UpdateDto
 
 4. **DAO 생성 (작업폴더안에서 꼭 작업!! 중요!)**
 
    - `api/src/modules/[테이블명-케밥케이스]/dao/[테이블명-케밥케이스].dao.ts`로 파일 생성
-   - `api/src/modules/test/dao/test-data.dao.ts` 파일 형식 참고
+   - `api/src/modules/test-data/dao/test-data.dao.ts` 파일 형식 참고
    - `sql-template-strings` 라이브러리 사용
    - 감사 칼럼은 쿼리 마지막에 배치
 
 5. **Service 생성 (작업폴더안에서 꼭 작업!! 중요!)**
 
    - `api/src/modules/[테이블명-케밥케이스]/service/[테이블명-케밥케이스].service.ts`로 파일 생성
-   - `api/src/modules/test/service/test-data.service.ts` 파일 형식 참고
+   - `api/src/modules/test-data/service/test-data.service.ts` 파일 형식 참고
    - static 메서드 사용
    - 파일 업로드 여부에 따라 함수 조정
 
 6. **Validator 생성 (작업폴더안에서 꼭 작업!! 중요!)**
 
    - `api/src/modules/[테이블명-케밥케이스]/controller/[테이블명-케밥케이스].validator.ts`로 파일 생성
-   - `api/src/modules/test/controller/test-data.validator.ts` 파일 형식 참고
+   - `api/src/modules/test-data/controller/test-data.validator.ts` 파일 형식 참고
    - **DB 컬럼이 null 허용이면 `@IsOptional()` 데코레이터 적용**
    - `class-validator` 데코레이터 사용
    - 데이터베이스 제약사항 반영
@@ -188,14 +188,14 @@ cp -r src/modules/[테이블명-케밥케이스]/ ../[테이블명]-service/
 7. **Controller 생성 (작업폴더안에서 꼭 작업!! 중요!)**
 
    - `api/src/modules/[테이블명-케밥케이스]/controller/[테이블명-케밥케이스].controller.ts`로 파일 생성
-   - `api/src/modules/test/controller/test-data.controller.ts` 파일 형식 참고
+   - `api/src/modules/test-data/controller/test-data.controller.ts` 파일 형식 참고
    - `routing-controllers` 라이브러리 사용
    - RESTful API 설계
 
 8. **TDD 테스트 생성 (작업폴더안에서 꼭 작업!! 중요!)**
 
    - `api/src/modules/[테이블명-케밥케이스]/test/[테이블명-케밥케이스].test.ts`로 파일 생성
-   - `api/src/modules/test/test/test-data.test.ts` 파일 형식 참고
+   - `api/src/modules/test-data/test/test-data.test.ts` 파일 형식 참고
    - **Service 레이어만 테스트** (가장 중요한 비즈니스 로직)
    - 완전한 CRUD 생명주기 테스트
    - 실제 데이터베이스 사용 (모킹 금지)
