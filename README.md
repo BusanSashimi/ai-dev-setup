@@ -1,189 +1,115 @@
-# AI 개발 자동화 도구 - 환경 셋팅 및 사용 가이드
+# AI Development Guidelines - Cursor Rules and Documentation
 
-프로젝트의 백엔드/프론트엔드 CRUD 코드를 자동으로 생성하는 `ai-dev` 도구의 환경 구성 및 사용법을 안내합니다.
-
----
-
-## 📁 프로젝트 구조 개요
-
-```
-root/  #root (예: backoffice, itax 등 프로젝트명)
-├── api/              # 백엔드 (Node.js + TypeScript)
-│   └── src/
-│       └── modules/             # 기능별 모듈(템플릿 코드 필요)
-├── webapp/           # 프론트엔드 (Vue3 + Nuxt UI)
-│   └── src/
-│       └── modules/             # 기능별 모듈(템플릿 코드 필요)
-└── ai-dev/                      # 🤖 AI 개발 자동화 도구
-    ├── README.md                # 이 파일
-    ├── backend-crud.md          # 백엔드 CRUD 자동 생성 가이드
-    ├── frontend-store.md        # 프론트엔드 Store 자동 생성 가이드
-    └── frontend-ui.md           # 프론트엔드 UI 자동 생성 가이드
-```
+This directory contains Cursor rules (`.mdc` files) and documentation for AI-assisted development of the busansashimi portfolio project.
 
 ---
 
-## 🚀 AI 개발 자동화 도구 사용 프로세스
+## Project Structure Overview
 
-### 1단계: 백엔드 CRUD 생성
-
-- 데이터베이스 테이블 기반으로 Controller, Service, DAO, Type, Validator, TDD 테스트 코드 자동 생성
-- 프로젝트 표준 규칙 완벽 준수
-
-### 2단계: 프론트엔드 Store 생성
-
-- 백엔드 API 기반 Vue3 Store(상태관리) 자동 생성
-- API 호출 함수 및 상태 변수 포함, 백엔드 타입과 100% 일치하는 타입 생성
-
-### 3단계: 프론트엔드 UI 생성
-
-- 기존 Store와 Type 기반 완전한 CRUD UI 컴포넌트 자동 생성
-- NuxtUI v3, TailwindCSS v4 적용, 모바일 & 데스크톱 반응형 디자인
+```
+busansashimi/
+├── project/          # Main Next.js project (deployed service)
+│   ├── amplify/      # AWS Amplify Gen 2 backend
+│   ├── src/          # Source code
+│   │   ├── app/      # Next.js App Router pages
+│   │   ├── components/  # UI components (shadcn/ui)
+│   │   ├── content/  # Article content
+│   │   ├── hooks/    # Custom React hooks
+│   │   ├── lib/      # Utilities and config
+│   │   ├── types/    # TypeScript types
+│   │   └── utils/    # API utilities
+│   ├── system/       # Custom system components
+│   └── public/       # Static assets
+├── reference/        # v0-maintained design reference project
+│   ├── app/          # Reference pages and components
+│   ├── components/   # Reference UI components
+│   └── ...
+└── ai-dev/           # Cursor rules and documentation
+    ├── *.mdc         # Cursor rule files
+    ├── doc/          # Additional documentation
+    └── README.md     # This file
+```
 
 ---
 
-## 📂 환경 셋팅 가이드
+## Cursor Rules (.mdc Files)
 
-### 1. 프로젝트 저장소 구성
+The following rule files are applied to guide AI-assisted development:
 
-- `api`, `webapp`, `ai-dev`는 각각 독립된 GitHub 저장소입니다.
-- `api`와 `webapp`은 상호 연동되는 백엔드/프론트엔드 저장소이다.
-- `ai-dev`는 이 두 저장소와 별도로 자동화 코드를 생성하는 도구 저장소입니다.
+| File                             | Purpose                                                      |
+| -------------------------------- | ------------------------------------------------------------ |
+| `nextjs-typescript-tailwind.mdc` | Next.js, TypeScript, and Tailwind CSS development guidelines |
+| `shadcn-nextjs.mdc`              | shadcn/ui and Next.js best practices                         |
+| `tailwind.mdc`                   | Tailwind CSS conventions and patterns                        |
+| `tailwind-shadcn.mdc`            | Tailwind + shadcn integration guidelines                     |
+| `clean-code.mdc`                 | Clean code principles and readability                        |
+| `code-quality.mdc`               | Code quality standards and error handling                    |
+| `dev-log.mdc`                    | Automatic logging of operations to daily log files           |
 
-### 2. 로컬 환경 폴더 구조 맞추기
+---
 
-예시: `itax` 프로젝트의 경우
+## Directory Explanations
 
-```bash
-mkdir itax
-cd itax
+### project/
 
-git clone <API_GITHUB_URL> api
-git clone <WEBAPP_GITHUB_URL> webapp
-git clone <AI_DEV_GITHUB_URL> ai-dev
-```
-
-- 각 저장소는 반드시 지정된 폴더명(`api`, `webapp`, `ai-dev`)으로 클론해야 합니다.
-- 결과적으로 폴더 구조는 아래와 같습니다.
+The main development project that is deployed as a production service.
 
 ```
-itax/
-├── api/          # 백엔드 소스 (Node.js + TypeScript)
-├── webapp/       # 프론트엔드 소스 (Vue3 + Nuxt UI)
-└── ai-dev/       # AI 개발 자동화 도구
-```
-
-### 3. `api`, `webapp` 내 모듈 폴더 및 템플릿 코드 준비
-
-- AI 자동화 도구는 각 저장소 내 `src/modules/[모듈명]` 폴더를 기준으로 코드 자동 생성을 수행합니다.
-- 예를 들어, 테스트용 모듈(`test`)이 있다면 다음과 같이 템플릿 코드가 존재해야 합니다.
-
-```
-api/
+project/
 └── src/
-    └── modules/
-        └── test/          # AI가 분석하여 CRUD 코드 자동 생성을 수행하는 템플릿 코드들
-
-webapp/
-└── src/
-    └── modules/
-        └── test/          # 프론트엔드 관련 템플릿 코드 및 스토어, 컴포넌트 등
+    └── app/
+        └── ...           # Project that is actually developed to deploy as a service
 ```
 
-- 이 템플릿 코드는 비어있거나 기본 샘플 형태여도 무방합니다.
-- AI 도구가 이를 기반으로 Controller, Service, DAO, Validator, Store, UI 컴포넌트를 자동 생성 및 갱신합니다.
+### reference/
+
+A reference project maintained by v0 (Vercel's AI design tool) as a design reference. Use this directory to compare designs and component implementations.
+
+```
+reference/
+└── app/
+    └── ...               # Reference project that is maintained by v0 as design reference
+```
 
 ---
 
-## 🔧 기본 명령어 사용 방법 및 주의사항
+## Tech Stack
 
-### 백엔드 CRUD 자동 생성
+### Frontend
 
-```
-/run [테이블명]              # 기본값: file=N (파일 업로드 없음)
-/run [테이블명] file=Y       # 파일 업로드 포함
+- Next.js 15 (App Router)
+- React 19
+- TypeScript
+- Tailwind CSS v4
+- SCSS Modules
+- shadcn/ui
+- Radix UI
 
-해당 파일을 전체를 읽고 가이드를 숙지하여 진행
-```
+### Backend
 
-### 프론트엔드 Store 자동 생성
-
-```
-/run [모듈명]
-
-해당 파일을 전체를 읽고 가이드를 숙지하여 진행
-```
-
-### 프론트엔드 UI 자동 생성
-
-```
-/run [모듈명]                # 기본 CRUD 페이지 생성
-/run [모듈명] two             # 투뎁스(Two-Depth) 레이아웃 생성
-/run [모듈명] select          # 선택 모달(Select Modal) 생성
-
-해당 파일을 전체를 읽고 가이드를 숙지하여 진행
-```
-
-- **명령어 해설**  
-  이 명령어는 AI 개발 자동화 도구에서 백엔드, 프론트엔드 CRUD 코드 자동 생성 작업을 단계별로 수행합니다.
-
-- **주요 옵션 설명**
-
-  - **백엔드**: `file=Y` 파일 업로드 기능 포함 여부
-  - **프론트엔드 UI**: `two` 투뎁스 레이아웃, `select` 선택 모달 생성
-
-- **주의**  
-  반드시 "해당 파일을 전체를 읽고 가이드를 숙지하여 진행" 문구를 포함해야 합니다.  
-  이 문구가 없으면 가이드대로 동작하지 않고, AI가 멋대로 코드를 생성하는 경향이 있기 때문입니다.
-
-- **사용 예시**
-
-  아래처럼 추가 요구사항을 덧붙일 수도 있습니다:
-
-  ```
-  /run member-auth
-
-  해당 파일을 전체를 읽고 가이드를 숙지하여 진행
-  등록, 수정, 삭제는 필요하지 않아서 그건 제외하고 만들어줘.
-  ```
-
-  ```
-  /run board-notice two
-
-  해당 파일을 전체를 읽고 가이드를 숙지하여 진행
-  게시판은 투뎁스 레이아웃으로 만들어줘.
-  ```
-
-  ```
-  /run member-list select
-
-  해당 파일을 전체를 읽고 가이드를 숙지하여 진행
-  회원 선택 모달 컴포넌트를 만들어줘.
-  ```
-
-  - 이처럼 명령어 하단에 원하는 요구사항을 자유롭게 추가할 수 있습니다.
-
-### 옵션별 상세 설명
-
-#### `two` 투뎁스 레이아웃
-
-- **구조**: 좌측 패널(검색+목록) + 우측 패널(상세뷰)
-- **특징**: 목록에서 항목 선택 시 우측에 상세 정보 표시
-- **적용 사례**: 대시보드, 관리자 페이지, 데이터 분석 화면
-
-#### `select` 선택 모달
-
-- **구조**: 모달 기반 선택 컴포넌트
-- **특징**: 단일/다중 선택 지원, 선택된 항목 badge 표시
-- **적용 사례**: 데이터 선택기, 검색 후 선택, 관계 설정 UI
+- AWS Amplify Gen 2
+- GraphQL (AWS AppSync)
+- DynamoDB
+- AWS Cognito (Authentication)
 
 ---
 
-## 💡 왜 이렇게 구성해야 할까요?
+## Usage
 
-| 이유                           | 설명                                                                                     |
-| ------------------------------ | ---------------------------------------------------------------------------------------- |
-| 독립적 저장소 관리             | 각 저장소가 독립적이므로 버전 관리 및 배포가 용이합니다.                                 |
-| 자동화 도구의 정확한 작동 보장 | AI 도구는 특정 위치에 백엔드와 프론트엔드 코드를 찾으므로 폴더 명칭과 위치가 중요합니다. |
-| 코드 일관성 및 재사용성        | 동일한 폴더 구조로 여러 프로젝트에서 자동화 스크립트를 재활용하기 쉽습니다.              |
-| 모듈 단위 코드 자동 생성 보장  | `src/modules/[모듈명]` 폴더 내 템플릿 코드를 기준으로 AI가 분석하여 코드를 생성합니다.   |
+1. **For AI-assisted development**: The `.mdc` files are automatically applied by Cursor to guide code generation and suggestions.
+
+2. **For design reference**: Compare implementations between `project/` and `reference/` directories when working on UI components.
+
+3. **For documentation**: Add additional documentation files to the `doc/` subdirectory as needed.
+
+---
+
+## Key Development Guidelines
+
+- Use TypeScript for all code; prefer interfaces over types
+- Use functional and declarative programming patterns
+- Follow mobile-first responsive design with Tailwind CSS
+- Minimize `use client`; favor React Server Components (RSC)
+- Use descriptive variable names with auxiliary verbs (e.g., `isLoading`, `hasError`)
+- Implement accessibility features on all interactive elements
+- Handle errors and edge cases early with guard clauses
