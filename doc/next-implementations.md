@@ -4,11 +4,12 @@ This is the index of planned work for the recorder. Each entry links to a detail
 code-grounded implementation plan in this directory. Plans reference real files/symbols and
 include step-by-step changes with verification checks.
 
-_Last updated: 2026-06-14. The original five plans (P1 quick-wins → trim editor v2) and the
-second wave (system audio, packaging, dead-code removal, tests, composition layouts) are all
-shipped. This revision plans the **third wave** from the backlog — encoder tuning, AudioWorklet
-migration, auto-update, system-audio polish, and per-section transport teardown — so the backlog
-is now empty._
+_Last updated: 2026-06-15. The original five plans (P1 quick-wins → trim editor v2), the second
+wave (system audio, packaging, dead-code removal, tests, composition layouts), and the third wave
+(encoder tuning, AudioWorklet migration, auto-update, system-audio polish, per-section transport
+teardown) are all shipped. The **fourth wave** below was discovered by a full code+docs audit once
+the backlog ran dry — verified bug fixes, the mp4-muxer→mediabunny migration, a root-docs refresh,
+and product-shell completeness._
 
 ---
 
@@ -173,10 +174,82 @@ The first two waves are fully shipped. Suggested order for the third:
 
 ---
 
+## Planned work (fourth wave — from the 2026-06-15 codebase audit)
+
+The third wave's backlog was empty, so a full 7-dimension audit (docs · recording core ·
+transport/audio · Rust backend · trim editor · tech-debt/tests · release/CI), with every finding
+adversarially re-verified against the code, surfaced this wave. Each item has a detailed plan.
+
+| Plan | Priority | Effort | Risk | Surface |
+|------|----------|--------|------|---------|
+| [Bug fixes: trim A/V desync + native SCK stream leaks](bug-fixes-trim-desync-and-sck-leaks.md) | **P1** ✅ | M | med | frontend |
+| [mp4-muxer → mediabunny migration](mp4-muxer-to-mediabunny-migration.md) | P2 ✅ | S | low–med | frontend |
+| [Root-docs refresh (README + ARCHITECTURE + retire stale)](root-docs-refresh.md) | P2 ✅ | M | low | docs |
+| [Product completeness (timeline · dead buttons · icon · reveal-in-Finder)](product-completeness-shell.md) | P2 ✅ | M | med | frontend+build |
+
+> ✅ Shipped: **Bug fixes** (`a60f5fb` Bug A, `9072f9f` Bugs B & C); the **mp4-muxer → mediabunny
+> migration** (recording now muxes with mediabunny; `mp4-muxer` dropped; main bundle −31 kB); and
+> the **root-docs refresh** (README rewritten, new `/ARCHITECTURE.md`, the 4 stale recording docs
+> moved to `docs/archive/` with a HISTORICAL banner). The docs-refresh adapted this plan to the
+> post-migration reality: ARCHITECTURE names **mediabunny** (not mp4-muxer) as the live muxer.
+>
+> ✅ **Product completeness — done** (`ed74738` + `d6c5425`): timeline option C (honest read-only
+> clip strip + "Open in editor", fake transport removed), reveal-in-Finder (`@tauri-apps/plugin-opener`
+> in the save toast + Export), dead-transport-button removal, and a branded app icon (microphone mark
+> on a gradient; source at `src-tauri/icons/app-icon.svg`, regenerated via `tauri icon`).
+>
+> **Fourth wave complete** + the preview-play-button follow-up (`560283c`): removed preview.tsx's
+> dead play/pause overlay control and the now-orphaned `timelinePlayback` event (gone from the
+> codebase). Open follow-ups (not yet planned): replace the placeholder icon with real designed art
+> when available; and the interactive/manual verifications noted per item (record→trim ffprobe, SCK
+> leak checks, reveal-in-Finder live, recording→mediabunny decode probe, auto-update round-trip).
+
+### P1 — Bug fixes: trim frame-accurate A/V desync + native SCK stream leaks · _M_
+Three verified defects on the audio/transport surface. **Bug A (HIGH):** the frame-accurate trim
+export rebases video to `seg.in` but audio to the earlier keyframe `origin`, so audio leads video
+by up to one ~3 s GOP — exactly in the feature's intended (non-keyframe in-point) case. **Bug B/C
+(MED):** stopping a recording during the async audio-acquire window, or interrupting the monitor
+(index 99) start while recording (index 0) starts, orphans native ScreenCaptureKit audio sessions
+that live until app exit. Ship A first. → [bug-fixes-trim-desync-and-sck-leaks.md](bug-fixes-trim-desync-and-sck-leaks.md)
+
+### P2 — mp4-muxer → mediabunny migration · _S_
+Recording still muxes via the deprecated, unmaintained `mp4-muxer` while the trim editor already
+uses `mediabunny` (bundled) — the app ships two MP4 muxers. Coupling is shallow (one import, one
+target/ref, ~4 call sites). Swap recording onto mediabunny's `Output`/`Mp4OutputFormat`, drop the
+`mp4-muxer` dep. Open question resolved in-plan: the WKWebView `extractAudioSpecificConfig` esds
+handling is retained (mediabunny's `esds()` wraps the ASC the same way). →
+[mp4-muxer-to-mediabunny-migration.md](mp4-muxer-to-mediabunny-migration.md)
+
+### P2 — Root-docs refresh · _M_
+The four root docs (README, RECORDING_IMPLEMENTATION, RECORDING_DEBUG_FINDINGS, DEBUGGING_GUIDE)
+describe the **deleted** native FFmpeg / JSON-IPC-per-frame pipeline and cite a non-existent
+`external_recorder.rs`; there is no accurate top-level ARCHITECTURE.md. Rewrite README, add
+ARCHITECTURE.md (live path = frontend WebCodecs + muxer over raw-byte save IPC; capture = SCK over
+Channel), and archive the three stale recording docs with a historical header. Sequence **after**
+the muxer migration so ARCHITECTURE names the right muxer. → [root-docs-refresh.md](root-docs-refresh.md)
+
+### P2 — Product completeness (shell polish) · _M_
+The bottom-half Timeline (~350 lines, half the window) is **mock UI** — hardcoded tracks, empty
+`clips`, a fake `setInterval` playhead that seeks no media — plus two dead `SkipBack`/`SkipForward`
+toolbar buttons, the default Tauri placeholder app icon, and a save flow that only toasts a path
+(the bundled `tauri-plugin-opener` is never called). Recommended: an honest read-only clip strip +
+"Open in Editor" (option C), retire the dead transport, brand the icon, add a "Reveal in Finder"
+toast action. → [product-completeness-shell.md](product-completeness-shell.md)
+
+### Recommended sequencing (fourth wave)
+1. **Bug fixes** — P1, user-facing desync + accumulating native leaks; ship Bug A first.
+2. **mp4-muxer → mediabunny** — small, isolated; unifies the muxer and dissolves the untested
+   `extractAudioSpecificConfig` risk.
+3. **Root-docs refresh** — after the migration, so ARCHITECTURE.md names the surviving muxer.
+4. **Product completeness** — gated on the Timeline wire-vs-remove decision (open question); the
+   icon + reveal-in-Finder sub-items can land independently anytime.
+
+---
+
 ## Backlog (not yet planned in detail)
 
-Empty — every previously-listed item now has a detailed plan above (third wave). New ideas land
-here first, then graduate to a plan doc.
+Empty — the fourth wave (above) drained the 2026-06-15 audit findings into detailed plans. New
+ideas land here first, then graduate to a plan doc.
 
 > Note: `ai-dev/` is its own git repository. These docs are written but **not committed** —
 > commit them from inside `ai-dev/` if you want them tracked.
